@@ -120,6 +120,7 @@ _.mixin(Dataset.prototype, EventEmitter, {
       var $suggestions;
       var nodes;
       var self = this;
+      var dropdownId = this.$menu.attr('id');
 
       var suggestionsHtml = html.suggestions.
         replace('%PREFIX%', this.cssClasses.prefix).
@@ -133,7 +134,7 @@ _.mixin(Dataset.prototype, EventEmitter, {
 
       return $suggestions;
 
-      function getSuggestionNode(suggestion) {
+      function getSuggestionNode(suggestion, index) {
         var $el;
 
         var suggestionHtml = html.suggestion.
@@ -145,6 +146,7 @@ _.mixin(Dataset.prototype, EventEmitter, {
         $el.data(datasetKey, that.name);
         $el.data(valueKey, that.displayFn(suggestion) || undefined); // this led to undefined return value
         $el.data(datumKey, JSON.stringify(suggestion));
+        $el.attr('id', dropdownId + '-' + index);
         $el.children().each(function() { DOM.element(this).css(css.suggestionChild); });
 
         return $el;

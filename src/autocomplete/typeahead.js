@@ -110,16 +110,27 @@ _.mixin(Typeahead.prototype, {
       this.input.setInputValue(datum.value, true);
     }
 
+    this.input.$input.attr('aria-activedescendant', datum.id);
+
     this.eventBus.trigger('cursorchanged', datum.raw, datum.datasetName);
   },
 
   _onCursorRemoved: function onCursorRemoved() {
     this.input.resetInputValue();
+    this.input.$input.removeAttr('aria-activedescendant');
     this._updateHint();
   },
 
   _onDatasetRendered: function onDatasetRendered() {
     this._updateHint();
+
+    // Mark the dropdown as opened/closes in ARIA
+    var isVisible = this.dropdown.isVisible();
+    this.input.$input.attr('aria-expanded', isVisible);
+    // Remove the currently selected suggestion in ARIA
+    if (!isVisible) {
+      this.input.$input.removeAttr('aria-activedescendant');
+    }
 
     this.eventBus.trigger('updated');
   },
@@ -136,6 +147,8 @@ _.mixin(Typeahead.prototype, {
 
   _onClosed: function onClosed() {
     this.input.clearHint();
+    this.input.$input.removeAttr('aria-activedescendant');
+    this.input.$input.attr('aria-expanded', false);
 
     this.eventBus.trigger('closed');
   },
@@ -399,12 +412,25 @@ function buildDom(options) {
   }
   $hint = $input.clone().css(css.hint).css(getBackgroundStyles($input));
 
+  // Add unique ARIA id that will be used by the suggestion children
+  var uuid = 'aa-aria-' + _.getUniqueId();
+  $dropdown.attr('id', uuid);
+  $input.attr({
+    'aria-owns': uuid,
+    'aria-expanded': false
+  });
+
   $hint
     .val('')
     .addClass(_.className(options.cssClasses.prefix, options.cssClasses.hint, true))
     .removeAttr('id name placeholder required')
     .prop('readonly', true)
-    .attr({autocomplete: 'off', spellcheck: 'false', tabindex: -1});
+    .attr({
+      autocomplete: 'off',
+      spellcheck: 'false',
+      tabindex: -1,
+      'aria-hidden': true
+    });
   if ($hint.removeData) {
     $hint.removeData();
   }
@@ -420,7 +446,12 @@ function buildDom(options) {
 
   $input
     .addClass(_.className(options.cssClasses.prefix, options.cssClasses.input, true))
-    .attr({autocomplete: 'off', spellcheck: false})
+    .attr({
+      autocomplete: 'off',
+      spellcheck: false,
+      role: 'combobox',
+      'aria-autocomplete': 'list'
+    })
     .css(options.hint ? css.input : css.inputWithNoHint);
 
   // ie7 does not like it when dir is set to auto

@@ -1,0 +1,21 @@
+Basic ARIA
+  Default options should have
+    hint with aria-hidden true
+    input with role combobox
+    dropdown with role listbox
+    suggestion with role option
+
+Input aria-owns is equal to dropdown #id
+Input aria-activedescendant is equal to id of selected suggestion
+Input aria-activedescendant is removed when dropdown is closed
+
+Expanded
+  input aria-expanded is false by default
+  input aria-expanded is true when dropdown is visible
+  input aria-expanded is back to false when dropdown hidden
+
+
+Read status
+  Default options should have 
+    dataset with role presentation
+    suggestion with role presentation

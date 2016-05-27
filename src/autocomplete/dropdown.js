@@ -115,6 +115,7 @@ _.mixin(Dropdown.prototype, EventEmitter, {
 
   _hide: function() {
     this.$menu.hide();
+
   },
 
   _show: function() {
@@ -242,7 +243,8 @@ _.mixin(Dropdown.prototype, EventEmitter, {
       datum = {
         raw: Dataset.extractDatum($el),
         value: Dataset.extractValue($el),
-        datasetName: Dataset.extractDatasetName($el)
+        datasetName: Dataset.extractDatasetName($el),
+        id: $el.attr('id')
       };
     }
 

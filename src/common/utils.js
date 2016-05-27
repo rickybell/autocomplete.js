@@ -1,5 +1,6 @@
 'use strict';
 
+
 var DOM = require('./dom.js');
 
 module.exports = {
